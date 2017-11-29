@@ -1,0 +1,38 @@
+/*
+ * main.css:
+ *    Styles for the files go in this file
+ */
+
+/* Nothing yet */
+body {
+    font-family: 'Courier New', monospace;
+}
+
+.lyrics {
+    margin-left: 3em;
+    font-style: italic;
+}
+
+.attribution  {
+    font-size: smaller;
+}
+
+memo {
+    position: sticky;
+}
+
+h1 {
+    font-family: Futura;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.container-fluid {
+    height: 100%;
+}
+
+/* Footer */
+
+footer {
+  padding: 25px 0;
+}

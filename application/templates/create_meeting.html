@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Meetings</title>
+
+    <!-- 'viewport' is used by bootstrap to respond to device size -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Javascript:  JQuery from a content distribution network (CDN) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <!-- Bootstrap includes javascript and css  (must follow jquery) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Moment.js -->
+    <script src="/static/js/moment.min.js"></script>
+
+    <!-- Our own style sheet -->
+    <link rel="stylesheet" href="/static/css/main.css" />
+
+    <!-- Date range picker -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+    <!-- Sliptree token thing -->
+    <script src="/sliptree-bootstrap/dist/bootstrap/tokenfield.min.js"></script>
+    <link rel="stylesheet" href="/sliptree-bootstrap/dist/bootstrap-tokenfield.css">
+
+</head>
+<body>
+<div class="container">
+  <h1>Meetings</h1>
+</div>
+
+<div class="container-fluid courier">
+    <div class="form-group">
+        <label for="meeting_name">Meeting Name:</label>
+        <input type="text" class="form-control" id="meeting_name" placeholder="Enter Name">
+    </div>
+
+    <div class="form-group">
+        <label for="your_email">Your Email:</label>
+        <input type="email" class="form-control" id="your_email" placeholder="Enter Email">
+    </div>
+
+    <div class="form-group">
+        <label for="daterange">Date Range:</label>
+        <input type="text" name="daterange" size="12" class="date" id="daterange"
+                        {% if session.daterange is defined %}
+                            value="{{session.daterange}}"
+                        {% endif %}
+                            class="pull-down"
+                            style="background: #fff; cursor: pointer; padding: 5px 10px;
+                                   border: 1px solid #ccc; width: 12em">
+                        <script type="text/javascript">
+                            $(function() {
+                                $('input[name="daterange"]').daterangepicker(
+                                    {    ranges: {
+                                    'Today': [moment(), moment()],
+                                    'Tomorrow':[moment().add(1, 'days'),
+                                                moment().add(1, 'days')],
+                                    'This week':[moment(), moment().endOf('week')],
+                                    'Next week':[moment().add(7, 'days').startOf('week'),
+                                                moment().add(7, 'days').endOf('week')],
+                                    'This month':[moment(), moment().endOf('month')],
+                                    'Within two weeks':[moment(),moment().add(15, 'days')]
+                                    }}
+                                );
+                             });
+                        </script>
+    </div>
+
+    <div class="form-group">
+        <label for="meeting_begin">Meeting Start Time:</label>
+        <input type="time" name="begin_time" id="meeting_begin" value="00:00"/>
+
+    </div>
+
+    <div class="form-group">
+        <label for="meeting_begin">Meeting End Time:</label>
+        <input type="time" name="end_time" id="meeting_end" value="00:00"/>
+    </div>
+
+    <div class="form-group">
+        <label for="group_emails">Invitee Emails:</label>
+        <input type="email" class="form-control" id="group_emails">
+        # script from sliptree bootstrap tokenfield
+        # http://sliptree.github.io/bootstrap-tokenfield/
+        <script>
+            $('#tokenfield')
+
+              .on('tokenfield:createtoken', function (e) {
+                var data = e.attrs.value.split('|')
+                e.attrs.value = data[1] || data[0]
+                e.attrs.label = data[1] ? data[0] + ' (' + data[1] + ')' : data[0]
+              })
+
+              .on('tokenfield:createdtoken', function (e) {
+                // Über-simplistic e-mail validation
+                var re = /\S+@\S+\.\S+/
+                var valid = re.test(e.attrs.value)
+                if (!valid) {
+                  $(e.relatedTarget).addClass('invalid')
+                }
+              })
+
+              .on('tokenfield:edittoken', function (e) {
+                if (e.attrs.label !== e.attrs.value) {
+                  var label = e.attrs.label.split(' (')
+                  e.attrs.value = label[0] + '|' + e.attrs.value
+                }
+              })
+
+              .on('tokenfield:removedtoken', function (e) {
+                alert('Token removed! Token value was: ' + e.attrs.value)
+              })
+
+              .tokenfield()
+        </script>
+    </div>
+
+    <button type="submit" class="btn btn-default" id="create_meeting">Create Meeting</button>
+
+    <!--Footer-->
+    <footer>
+        <div id="footer-content">
+            <div class="col-md-4 text-right">
+                <small>copyright 2017, Taisei Klasen </small>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script type="text/javascript" src="/static/js/create_meeting.js"></script>
+
+</body>
+</html>
