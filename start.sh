@@ -21,7 +21,7 @@ source ${activate}
 echo "Activated"
 
 pushd application
-python3 flask_map.py -P ${PORTNUM} &
+python3 application.py -P ${PORTNUM} &
 pid=$! 
 popd
 echo "***"

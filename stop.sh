@@ -8,5 +8,5 @@
 # EXCEPT the grep command itself; tgurn them into 'kill' commands and
 # execute the commands with bash
 #
-ps -x | grep flask_map | grep -v grep | \
+ps -x | grep application | grep -v grep | \
     awk '{print "kill " $1}' | bash

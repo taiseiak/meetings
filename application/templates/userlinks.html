@@ -25,29 +25,24 @@
   <h1>Meetings</h1>
 </div>
 
-<div class="container-fluid courier">
-  <div class="col-md-6">
-    <div class="form-group">
-      <label for="date">Date:</label>
-      <input type="date" class="form-control" id="date">
+<div class="container courier">
+    <div class="alert alert-warning">These links go away: <strong>copy these links or click to send email</strong></div>
+  {% if g.users is defined %}
+    {% for user in g.users %}
+    <div class="well">
+        <strong>{{user.email}}</strong> link: <a href="mailto:{{user.email}}?Subject=Join the meeting: {{g.meeting_name}}!&body=Meeting link: {{user.link}}">{{user.link}}</a>
     </div>
-    <div class="form-group">
-      <label for="memo">Memo:</label>
-      <textarea class="form-control" rows="5" id="memo"></textarea>
-    </div>
-    <button type="button" class="btn btn-primary" id="save">Save</button>
-    <button type="button" class="btn btn-warning" id="clear">Clear</button>
-  </div>
+    {% endfor %}
+    {% endif %}
 
-  <div class="col-md-6 output">
-    <div id="memos"></div>
-    <script type="text/javascript" src="static/js/output.js"></script>
-  </div>
+    <button type="button" class="btn btn-default" id="go_calendar"
+            onclick="location.href = '{{g.mainuser}}'">Go to calendars</button>
+
 
   <!--Footer-->
         <footer>
             <div id="footer-content">
-                <div class="col-md-4 text-right">
+                <div class="text-right">
                     <small>&copy; 2017, Taisei Klasen </small>
                 </div>
             </div>
