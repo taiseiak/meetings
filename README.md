@@ -55,14 +55,14 @@ There are four pages to this web application. They are split into two
 categories: Creation and Joining
 
 ### Creation
-![Alt text](/img/Homepage.jpg?raw=true "Homepage")
+![Alt text](img/Homepage.png?raw=true "Homepage")
 
 The home page is the page where the meeting will be created. There are
 multiple fields to the application. NOTE: for the emails to work, enter
 or tab needs to be pressed after the email has been entered. The create meeting
 button will not do anything if the fields are not correctly input.
 
-![Alt text](/img/links.jpg?raw=true "links")
+![Alt text](img/links.png?raw=true "links")
 
 After the user creates the meeting name, times, and dates, they will be directed
 to a screen where the links of joining and checking up with the free times
@@ -73,14 +73,14 @@ own busy times submit link, where at this point they have the same power as
 all the other users in the group: submit busy times and check up on free times.
 
 ### Joining
-![Alt text](/img/busytimes.jpg?raw=true "buystimes")
+![Alt text](img/busytimes.png?raw=true "buystimes")
 
 The joining the meeting is simple. Enter the link into the url of the browser,
 and if the user has not submit their busy times yet, they will enter the calendars
 they want to submit. That is all that is required to submit the busy times. After
 they have submitted their busy time calendars, they will never see this screen again.
 
-![Alt text](/img/Freetimes.jpg?raw=true "Freetimes")
+![Alt text](img/Freetimes.png?raw=true "Freetimes")
 
 
 The meeting page shows the name of the meeting, the users that have responded and not
