@@ -60,14 +60,14 @@ APPLICATION_NAME = "Meetings"
 @app.route("/")
 @app.route("/index")
 def index():
+    """Creation of the meeting home page"""
     app.logger.debug("/Entering index")
-    '''if 'begin_date' not in flask.session: # FIXME use later?
-        init_session_values()'''
     return render_template('create_meeting.html')
 
 
 @app.route("/authorize")
 def authorize():
+    """Authorizing the user to input the busy times of the meeting"""
     app.logger.debug("Checking credentials for Google calendar access")
     credentials = valid_credentials()
     if not credentials:
@@ -124,6 +124,7 @@ def oauth2callback():
 
 @app.route("/meeting/<meeting_id>/userlinks")
 def userlinks(meeting_id):
+    """Page to show the links that will be sent out to the users"""
     users = get_users(meeting_id)
     users_list = []
     for user in users:
@@ -140,6 +141,10 @@ def userlinks(meeting_id):
 
 @app.route("/initialize_meeting", methods=['POST'])
 def initialize_meeting():
+    """
+    POST method that actually create the meeting
+     and inputs things to the database
+    """
     app.logger.debug(request.form)
     app.logger.debug("Initializing meeting")
 
@@ -165,6 +170,7 @@ def initialize_meeting():
 
 @app.route("/meeting/<meeting_id>")
 def show_meeting(meeting_id):
+    """Page to show the responded and free times of the meeting"""
     flask.session['meeting_id'] = meeting_id
     meeting_info = collection.find_one({"_id": ObjectId(meeting_id)})
     flask.g.meeting_name = meeting_info['meeting_name']
@@ -174,9 +180,13 @@ def show_meeting(meeting_id):
 
 @app.route("/meeting/<meeting_id>/user/<username>")
 def add_busytimes(meeting_id, username):
+    """Page to redirect to either the free time meeting page or to the
+    calendars page"""
     flask.session['meeting_id'] = meeting_id
     flask.session['username'] = username
     meeting = collection.find_one({"_id": ObjectId(meeting_id)})
+    flask.session['end_date'] = meeting['end_date']
+    flask.session['begin_date'] = meeting['begin_date']
     for user in meeting['emails']:
         if user['hash'] == username:
             if user['responded']:
@@ -189,6 +199,7 @@ def add_busytimes(meeting_id, username):
 
 @app.route("/get_free_times")
 def send_free_times():
+    """Gets the free times of the meeting"""
     # has information for users as well
     free_times = get_free_times(flask.session['meeting_id'])
     return flask.jsonify(result=free_times)
@@ -196,9 +207,7 @@ def send_free_times():
 
 @app.route("/_get_events", methods=['POST'])
 def getevents():
-    """
-    Send over the events of clicked calendars.
-    """
+    """Send over the events of clicked calendars."""
     app.logger.info("getting events")
     event_list = []
     free_list = get_free_times(flask.session['meeting_id'])
@@ -305,6 +314,8 @@ def cal_sort_key(cal):
 
 
 def setrange(daterange, meeting_begin, meeting_end):
+    """Puts all the information for meeting beginning and ending for the ranges
+    """
     app.logger.debug("Entering setrange")
     daterange_parts = daterange.split()
     flask.session['begin_date'] = interpret_date(daterange_parts[0])
@@ -314,6 +325,7 @@ def setrange(daterange, meeting_begin, meeting_end):
 
 
 def interpret_date(text):
+    """Interpret the date from the daterange picker"""
     app.logger.debug("Decoding time '{}'".format(text))
     try:
         as_arrow = arrow.get(text, "MM/DD/YYYY").replace(
@@ -326,6 +338,7 @@ def interpret_date(text):
 
 def create_database(meeting_name, meeting_begin, meeting_end, begin_date,
                     end_date, your_email, group_emails):
+    """Actually inputs all the right information into the database"""
     email_list = list()
     email_list.append({'email': your_email,
                        'hash': md5(your_email.encode()).hexdigest(),
@@ -359,6 +372,8 @@ def create_database(meeting_name, meeting_begin, meeting_end, begin_date,
 
 
 def create_free_times(begin_date, end_date, meeting_begin, meeting_end):
+    """Initializes all the free times from the information and returns that
+    list of free times"""
     begin_date = arrow.get(begin_date)
     end_date = arrow.get(end_date)
     free_list = []
@@ -392,11 +407,16 @@ def get_free_times(meeting_id):
 
 
 def get_users(meeting_id):
+    """Gets the users of the meeting.
+
+    The user information is the email, the hash, and the responded or not
+    """
     meeting = collection.find_one({"_id": ObjectId(meeting_id)})
     return meeting['emails']
 
 
 def add_to_event_list(event_list, calendars, begin, end):
+    """Method to get all the events and add to the event list"""
     service = get_gcal_service(valid_credentials())
     for calen in calendars:
         try:
@@ -418,6 +438,8 @@ def add_to_event_list(event_list, calendars, begin, end):
 
 
 def calculate_free_list(event_list, free_list):
+    """Calculates all the remaining free times from the free list and event
+    list"""
     app.logger.debug(event_list)
     for item in free_list:
         item['start'] = arrow.get(item['start'])
@@ -485,11 +507,13 @@ def calculate_free_list(event_list, free_list):
 
 
 def update_database(meeting_id, free_times):
+    """Adds an updated free time list into the database"""
     collection.update_one({"_id": ObjectId(meeting_id)},
                           {'$set': {'free_times': free_times}})
 
 
 def update_user_updated(meeting_id, userhash):
+    """Updates the responded portion of the user information"""
     collection.update_one({'_id': ObjectId(meeting_id),
                            "emails.hash": str(userhash)},
                           {"$set": {"emails.$.responded": True}})
